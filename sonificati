@@ -1,0 +1,47 @@
+import streamlit as st
+import pandas as pd
+import plotly.express as px
+import pyttsx3
+#pyttsx3 is a Python text-to-speech (TTS) library used to convert written text into spoken audio.
+
+# Initialize speech engine
+engine = pyttsx3.init()
+
+# Dataset
+data = {
+    "Category": ["A", "B", "C", "D", "E"],
+    "Value": [10, 25, 15, 30, 20]
+}
+df = pd.DataFrame(data)
+st.title("Accessible Multimodal Data Visualization")
+st.subheader("Select Category")
+# Dropdown filter
+selected_category = st.selectbox(
+    "Choose a Category",
+    df["Category"]
+)
+# Filter data
+filtered_df = df[df["Category"] == selected_category]
+# Colorblind-friendly visualization
+fig = px.bar(
+    filtered_df,
+    x="Category",
+    y="Value",
+    color="Category",
+    text="Value",
+    color_discrete_sequence=px.colors.qualitative.Safe
+)
+st.plotly_chart(fig)
+# Textual summary
+value = int(filtered_df["Value"].values[0])
+st.subheader("Data Summary")
+
+summary = f"Category {selected_category} has value {value}"
+st.write(summary)
+# Sonification
+if st.button("Play Audio Summary"):
+    engine.say(summary)
+    engine.runAndWait()
+# Show full dataset
+st.subheader("Dataset Table")
+st.dataframe(df)
