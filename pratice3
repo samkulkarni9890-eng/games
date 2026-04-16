@@ -1,0 +1,50 @@
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Title
+st.title("Student Performance Dashboard")
+
+# Dataset
+data = {
+    "Name": ["Amit", "Neha", "Rahul", "Sneha", "Kiran"],
+    "Math": [85, 92, 70, 88, 60],
+    "Science": [78, 88, 65, 90, 55],
+    "English": [90, 95, 72, 85, 65]
+}
+
+df = pd.DataFrame(data)
+
+# Display Data
+st.subheader("Student Dataset")
+st.dataframe(df)
+
+# Dropdown for Subject
+subject = st.selectbox("Select Subject", ["Math", "Science", "English"])
+
+# Slider for Minimum Marks
+min_marks = st.slider("Select Minimum Marks", 0, 100, 50)
+
+# Filter Data
+filtered_df = df[df[subject] >= min_marks]
+
+# Histogram
+st.subheader(f"Histogram of {subject} Marks")
+plt.figure()
+plt.hist(filtered_df[subject])
+plt.xlabel("Marks")
+plt.ylabel("Frequency")
+plt.title(f"{subject} Marks Distribution")
+st.pyplot(plt)
+
+# Bar Chart (Top Students)
+st.subheader("Top Students")
+
+top_students = filtered_df.sort_values(by=subject, ascending=False)
+
+plt.figure()
+plt.bar(top_students["Name"], top_students[subject])
+plt.xlabel("Students")
+plt.ylabel(subject)
+plt.title(f"Top Students in {subject}")
+st.pyplot(plt)
